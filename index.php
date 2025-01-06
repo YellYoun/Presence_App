@@ -60,7 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <section>
             <header>
                 <h1>Welcome Back</h1>
-                <p>Please login to continue</p>
             </header>
 
             <?php if (isset($error)): ?>

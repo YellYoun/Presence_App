@@ -29,6 +29,16 @@ $nav_items = [
 
 // Fetch the appropriate navigation for the user role
 $navigation = $nav_items[$user_role];
+
+// Fetch data for tables
+$professors_result = mysqli_query($conn, "SELECT * FROM professors");
+$modules_result = mysqli_query($conn, "
+    SELECT modules.id, modules.name AS module_name, professors.name AS professor_name, filieres.name AS filiere_name 
+    FROM modules
+    JOIN professors ON modules.professor_id = professors.id
+    JOIN filieres ON modules.filiere_id = filieres.id
+");
+$filieres_result = mysqli_query($conn, "SELECT * FROM filieres");
 ?>
 
 <!DOCTYPE html>
@@ -37,26 +47,32 @@ $navigation = $nav_items[$user_role];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
     <header>
-        <h1>Welcome, <?= htmlspecialchars($user_name) ?>!</h1>
-        <nav>
-            <ul>
-                <?php foreach ($navigation as $label => $link): ?>
-                    <li><a href="<?= $link ?>"><?= htmlspecialchars($label) ?></a></li>
-                <?php endforeach; ?>
-            </ul>
-        </nav>
-        <form action="logout.php" method="POST">
-            <button type="submit">Logout</button>
-        </form>
+        <div class="container my-4">
+            <h1>Welcome, <?= htmlspecialchars($user_name) ?>!</h1>
+            <nav>
+                <ul class="nav">
+                    <?php foreach ($navigation as $label => $link): ?>
+                        <li class="nav-item"><a class="nav-link" href="<?= $link ?>"><?= htmlspecialchars($label) ?></a></li>
+                    <?php endforeach; ?>
+                </ul>
+            </nav>
+            <form action="logout.php" method="POST">
+                <button type="submit" class="btn btn-danger">Logout</button>
+            </form>
+        </div>
     </header>
-    <main>
+
+    <main class="container">
         <h2>Dashboard</h2>
         <p>Use the navigation above to manage the system.</p>
+
         <?php if ($user_role === 'admin'): ?>
+            <!-- Quick Stats -->
             <section>
                 <h3>Quick Stats</h3>
                 <ul>
@@ -80,7 +96,78 @@ $navigation = $nav_items[$user_role];
                     </li>
                 </ul>
             </section>
+
+            <!-- Professors Table -->
+            <section class="my-4">
+                <h3>Professors</h3>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php while ($professor = mysqli_fetch_assoc($professors_result)): ?>
+                            <tr>
+                                <td><?= $professor['id'] ?></td>
+                                <td><?= htmlspecialchars($professor['name']) ?></td>
+                                <td><?= htmlspecialchars($professor['email']) ?></td>
+                            </tr>
+                        <?php endwhile; ?>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Modules Table -->
+            <section class="my-4">
+                <h3>Modules</h3>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Module Name</th>
+                            <th>Professor</th>
+                            <th>Filière</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php while ($module = mysqli_fetch_assoc($modules_result)): ?>
+                            <tr>
+                                <td><?= $module['id'] ?></td>
+                                <td><?= htmlspecialchars($module['module_name']) ?></td>
+                                <td><?= htmlspecialchars($module['professor_name']) ?></td>
+                                <td><?= htmlspecialchars($module['filiere_name']) ?></td>
+                            </tr>
+                        <?php endwhile; ?>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Filières Table -->
+            <section class="my-4">
+                <h3>Filières</h3>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php while ($filiere = mysqli_fetch_assoc($filieres_result)): ?>
+                            <tr>
+                                <td><?= $filiere['id'] ?></td>
+                                <td><?= htmlspecialchars($filiere['name']) ?></td>
+                            </tr>
+                        <?php endwhile; ?>
+                    </tbody>
+                </table>
+            </section>
         <?php endif; ?>
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -39,36 +39,38 @@ $result = mysqli_query($conn, "SELECT * FROM filieres");
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Filières</title>
-    <link rel="stylesheet" href="assets/css/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <header>
-        <h1>Manage Filières</h1>
-        <nav>
-            <a href="dashboard.php">Back to Dashboard</a>
-        </nav>
+        <div class="container my-4">
+            <h1>Manage Filières</h1>
+            <a href="dashboard.php" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
     </header>
 
-    <main>
+    <main class="container">
         <!-- Display messages -->
         <?php if (isset($message)): ?>
-            <p><?= htmlspecialchars($message) ?></p>
+            <div class="alert alert-info"><?= htmlspecialchars($message) ?></div>
         <?php endif; ?>
 
         <!-- Form to Add Filière -->
         <section>
             <h2>Add New Filière</h2>
-            <form action="filieres.php" method="POST">
+            <form action="filieres.php" method="POST" class="mb-4">
                 <input type="hidden" name="action" value="add">
-                <input type="text" name="name" placeholder="Filière Name" required>
-                <button type="submit">Add Filière</button>
+                <div class="mb-3">
+                    <input type="text" name="name" class="form-control" placeholder="Filière Name" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Filière</button>
             </form>
         </section>
 
         <!-- Display Existing Filières -->
         <section>
             <h2>Existing Filières</h2>
-            <table border="1">
+            <table class="table table-striped">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -82,19 +84,17 @@ $result = mysqli_query($conn, "SELECT * FROM filieres");
                             <td><?= $filiere['id'] ?></td>
                             <td><?= htmlspecialchars($filiere['name']) ?></td>
                             <td>
-                                <!-- Edit Form -->
-                                <form action="filieres.php" method="POST" style="display:inline;">
-                                    <input type="hidden" name="action" value="edit">
-                                    <input type="hidden" name="id" value="<?= $filiere['id'] ?>">
-                                    <input type="text" name="name" value="<?= htmlspecialchars($filiere['name']) ?>" required>
-                                    <button type="submit">Edit</button>
-                                </form>
-                                
+                                <!-- Edit Button -->
+                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal" 
+                                        data-id="<?= $filiere['id'] ?>"
+                                        data-name="<?= htmlspecialchars($filiere['name']) ?>">
+                                    Edit
+                                </button>
                                 <!-- Delete Form -->
                                 <form action="filieres.php" method="POST" style="display:inline;">
                                     <input type="hidden" name="action" value="delete">
                                     <input type="hidden" name="id" value="<?= $filiere['id'] ?>">
-                                    <button type="submit" onclick="return confirm('Are you sure you want to delete this filière?')">Delete</button>
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this filière?')">Delete</button>
                                 </form>
                             </td>
                         </tr>
@@ -103,5 +103,39 @@ $result = mysqli_query($conn, "SELECT * FROM filieres");
             </table>
         </section>
     </main>
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form action="filieres.php" method="POST" class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Filière</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="action" value="edit">
+                    <input type="hidden" name="id" id="edit-id">
+                    <div class="mb-3">
+                        <label for="edit-name" class="form-label">Name</label>
+                        <input type="text" name="name" id="edit-name" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const editModal = document.getElementById('editModal');
+        editModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            document.getElementById('edit-id').value = button.getAttribute('data-id');
+            document.getElementById('edit-name').value = button.getAttribute('data-name');
+        });
+    </script>
 </body>
 </html>
