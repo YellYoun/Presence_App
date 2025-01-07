@@ -47,10 +47,22 @@ $filieres_result = mysqli_query($conn, "SELECT * FROM filieres");
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+
+    <style>
+        .container.my-4 {
+            margin-top: 1.5rem !important;
+            margin-bottom: 1.5rem !important;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 20px;
+        }
+    </style>
+
     <header>
         <div class="container my-4">
+            <a href="dashboard.php" class="btn btn-secondary">←</a>
             <h1>Manage Students</h1>
-            <a href="dashboard.php" class="btn btn-secondary">Back to Dashboard</a>
         </div>
     </header>
 

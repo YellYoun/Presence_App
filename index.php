@@ -53,17 +53,86 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="./assets/css/styles.css">
+    <style>
+        /* Light blue sky theme */
+        body {
+            background-color: #cce7ff; /* Light blue sky */
+            color: #333;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        main {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-form {
+            background-color: #f9f9f9; /* Soft white for contrast */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #007bff; /* Bright blue for the heading */
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: red;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     <main>
-        <section>
-            <header>
-                <h1>Welcome Back</h1>
-            </header>
+        <section class="login-form">
+            <h1>Welcome Back</h1>
 
             <?php if (isset($error)): ?>
-                <p style="color: red;"><?= htmlspecialchars($error) ?></p>
+                <p class="error-message"><?= htmlspecialchars($error) ?></p>
             <?php endif; ?>
 
             <form action="index.php" method="POST">
@@ -84,6 +153,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
         </section>
     </main>
-    <script src="assets/js/scripts.js"></script>
 </body>
 </html>

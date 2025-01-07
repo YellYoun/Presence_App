@@ -48,22 +48,47 @@ $filieres_result = mysqli_query($conn, "SELECT * FROM filieres");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="./assets/css/styles.css">
 </head>
 <body>
+    <style>
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .nav-link {
+            border-radius: 8px;
+            color: #fff;
+            background-color: #00366f;
+        }
+
+        .nav-link:hover {
+            background-color: #000;
+            color: #fff;
+        }
+
+        .form-btn-danger {
+            margin: 0;
+        }
+    </style>
+
     <header>
         <div class="container my-4">
             <h1>Welcome, <?= htmlspecialchars($user_name) ?>!</h1>
-            <nav>
+            <nav class="navbar">
                 <ul class="nav">
                     <?php foreach ($navigation as $label => $link): ?>
                         <li class="nav-item"><a class="nav-link" href="<?= $link ?>"><?= htmlspecialchars($label) ?></a></li>
                     <?php endforeach; ?>
                 </ul>
+                <form action="logout.php" method="POST" class="form-btn-danger">
+                    <button type="submit" class="btn btn-danger">Logout</button>
+                </form>
             </nav>
-            <form action="logout.php" method="POST">
-                <button type="submit" class="btn btn-danger">Logout</button>
-            </form>
         </div>
     </header>
 

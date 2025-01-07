@@ -13,20 +13,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'];
     $professor_name = isset($_POST['name']) ? trim($_POST['name']) : null;
     $professor_email = isset($_POST['email']) ? trim($_POST['email']) : null;
+    $professor_password = isset($_POST['password']) ? password_hash(trim($_POST['password']), PASSWORD_BCRYPT) : null;
     $professor_id = isset($_POST['id']) ? (int) $_POST['id'] : null;
 
-    if ($action === 'add' && $professor_name && $professor_email) {
+    if ($action === 'add' && $professor_name && $professor_email && $professor_password) {
+        // Add professor to `professors` table
         $sql = "INSERT INTO professors (name, email) VALUES ('$professor_name', '$professor_email')";
+        if (mysqli_query($conn, $sql)) {
+            // Get the last inserted professor ID
+            $professor_id = mysqli_insert_id($conn);
+
+            // Add professor to `users` table with the role "professor"
+            $user_sql = "INSERT INTO users (username, password, role) VALUES ('$professor_email', '$professor_password', 'professor')";
+            mysqli_query($conn, $user_sql);
+            $message = "Professor added successfully!";
+        } else {
+            $message = "Error: " . mysqli_error($conn);
+        }
     } elseif ($action === 'edit' && $professor_id && $professor_name && $professor_email) {
         $sql = "UPDATE professors SET name='$professor_name', email='$professor_email' WHERE id=$professor_id";
+        if (mysqli_query($conn, $sql)) {
+            $message = "Professor updated successfully!";
+        } else {
+            $message = "Error: " . mysqli_error($conn);
+        }
     } elseif ($action === 'delete' && $professor_id) {
         $sql = "DELETE FROM professors WHERE id=$professor_id";
-    }
-
-    if (isset($sql) && mysqli_query($conn, $sql)) {
-        $message = "Action completed successfully!";
-    } else {
-        $message = "Error: " . mysqli_error($conn);
+        if (mysqli_query($conn, $sql)) {
+            $message = "Professor deleted successfully!";
+        } else {
+            $message = "Error: " . mysqli_error($conn);
+        }
     }
 }
 
@@ -43,10 +60,21 @@ $result = mysqli_query($conn, "SELECT * FROM professors");
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+        
+    <style>
+        .container.my-4 {
+            margin-top: 1.5rem !important;
+            margin-bottom: 1.5rem !important;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 20px;
+        }
+    </style>
     <header>
         <div class="container my-4">
+            <a href="dashboard.php" class="btn btn-secondary">←</a>
             <h1>Manage Professors</h1>
-            <a href="dashboard.php" class="btn btn-secondary">Back to Dashboard</a>
         </div>
     </header>
 
@@ -66,6 +94,9 @@ $result = mysqli_query($conn, "SELECT * FROM professors");
                 </div>
                 <div class="mb-3">
                     <input type="email" name="email" class="form-control" placeholder="Professor Email" required>
+                </div>
+                <div class="mb-3">
+                    <input type="password" name="password" class="form-control" placeholder="Password" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Add Professor</button>
             </form>
